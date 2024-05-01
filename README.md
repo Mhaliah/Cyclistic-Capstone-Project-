@@ -6,4 +6,3 @@ The project presented was about Cyclistic: A bike-sharing scheme with 600 dockin
 You got to choose 12 consecutive months of data to analyse- i went for the year of 2022
 
 You could choose which platform you wanted to analyse the data, i chose SQL as i felt most comfortable with it and i couldnt fit all the data into R
-
