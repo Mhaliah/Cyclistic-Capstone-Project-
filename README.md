@@ -7,4 +7,4 @@ You got to choose 12 consecutive months of data to analyse - i went for the year
 
 You could choose which platform you wanted to analyse the data, i chose SQL as i felt most comfortable with it and i couldnt fit all the data into R
 
-<iframe src="https://onedrive.live.com/embed?resid=339F0DDD55951F44%21532&amp;authkey=!AJLWvV5t7tyhbzw&amp;em=2&amp;wdAr=1.7777777777777777&amp;wdEaaCheck=1" width="476px" height="288px" frameborder="0">This is an embedded <a target="_blank" href="https://office.com">Microsoft Office</a> presentation, powered by <a target="_blank" href="https://office.com/webapps">Office</a>.</iframe>
+
