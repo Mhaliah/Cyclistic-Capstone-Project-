@@ -1,0 +1,159 @@
+----------------------These are the steps i took to get to know the data better ------------------------
+---- Some of these sequences was used and saved as CSV files in order to create data visualisations ----
+
+--Count trips based on the 3 different bike available 
+SELECT DISTINCT rideable_type, COUNT(rideable_type) AS no_of_trips
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY rideable_type;
+
+-- Count the number of trips (how big the data set is)
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+
+--See how many casual and member riders there was in 2022
+SELECT COUNT (member_casual)
+FROM ` Cyclistic.2022_trip_data`
+WHERE member_casual = 'casual'
+
+SELECT COUNT (member_casual)
+FROM ` Cyclistic.2022_trip_data`
+WHERE member_casual = 'member'
+
+--Minimum ride length 
+SELECT MIN (ride_length_) AS shortest_ride 
+FROM ` Cyclistic.2022_trip_data`
+
+--Maximum and minimun ride length for electric, classic and docked  bike  
+SELECT MAX (ride_length_)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'electric_bike'
+
+SELECT MAX (ride_length_)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'classic_bike'
+
+SELECT MAX (ride_length_)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'docked_bike'
+
+SELECT MIN (ride_length_)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'electric_bike'
+
+SELECT MIN (ride_length_)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'classic_bike'
+
+SELECT MIN (ride_length_)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'docked_bike'
+
+--Mode day of the week   
+SELECT day_of_week, COUNT(*) as mode_frequency
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY day_of_week
+ORDER BY COUNT(*) DESC
+LIMIT 1;
+
+-- the amount of each type of bike was riden by members
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'electric_bike'
+AND member_casual = 'member'
+
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'classic_bike'
+AND member_casual = 'member'
+
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'docked_bike'
+AND member_casual = 'member'
+
+-- the amount of each type of bike was riden by casual riders
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'electric_bike'
+AND member_casual = 'casual'
+
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'classic_bike'
+AND member_casual = 'casual'
+
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+WHERE rideable_type = 'docked_bike'
+AND member_casual = 'casual'
+
+-- Average ride length
+SELECT AVG(EXTRACT(HOUR FROM ride_length_) * 3600 + EXTRACT(MINUTE FROM ride_length_) * 60 + EXTRACT(SECOND FROM ride_length_)) AS average_ride_length_seconds
+FROM ` Cyclistic.2022_trip_data`;
+
+-- Average ride length for members and casual riders 
+SELECT 'member_casual',
+       AVG(CASE WHEN member_casual = 'member' THEN EXTRACT(HOUR FROM ride_length_) * 3600 + EXTRACT(MINUTE FROM ride_length_) * 60 + EXTRACT(SECOND FROM ride_length_) END) AS avg_ride_length_members_seconds,
+       AVG(CASE WHEN member_casual = 'casual' THEN EXTRACT(HOUR FROM ride_length_) * 3600 + EXTRACT(MINUTE FROM ride_length_) * 60 + EXTRACT(SECOND FROM ride_length_) END) AS avg_ride_length_casual_seconds
+FROM ` Cyclistic.2022_trip_data`;
+
+-- Average ride length for members and casual riders 
+SELECT day_of_week,
+       AVG(EXTRACT(HOUR FROM ride_length_) * 3600 + EXTRACT(MINUTE FROM ride_length_) * 60 + EXTRACT(SECOND FROM ride_length_)) AS average_ride_length_seconds
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY day_of_week
+ORDER BY 1;
+
+--Busiest weekday
+SELECT COUNT (*)
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY day_of_week
+
+--Busiest day of the week showing member and casual count 
+SELECT day_of_week,
+       SUM(CASE WHEN member_casual = 'member' THEN 1 ELSE 0 END) AS member_count,
+       SUM(CASE WHEN member_casual = 'casual' THEN 1 ELSE 0 END) AS casual_count
+FROM  ` Cyclistic.2022_trip_data`
+GROUP BY day_of_week
+ORDER BY (member_count + casual_count) DESC
+
+
+--Busiest Month showing member and casual count 
+SELECT SUBSTR(CAST(started_at AS STRING), 1, 7) AS month,
+       SUM(CASE WHEN member_casual = 'member' THEN 1 ELSE 0 END) AS member_count,
+       SUM(CASE WHEN member_casual = 'casual' THEN 1 ELSE 0 END) AS casual_count
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY SUBSTR(CAST(started_at AS STRING), 1, 7)
+ORDER BY (member_count + casual_count) DESC
+LIMIT 1;
+
+--Busiest Month showing member and casual count. Then i used this same data to work out busiest season
+SELECT SUBSTR(CAST(started_at AS STRING), 1, 7) AS month,
+       SUM(CASE WHEN member_casual = 'member' THEN 1 ELSE 0 END) AS member_count,
+       SUM(CASE WHEN member_casual = 'casual' THEN 1 ELSE 0 END) AS casual_count
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY SUBSTR(CAST(started_at AS STRING), 1, 7)
+ORDER BY (member_count + casual_count) DESC
+
+--Busiest hour
+SELECT EXTRACT(HOUR FROM started_at) AS hour,
+       SUM(CASE WHEN member_casual = 'member' THEN 1 ELSE 0 END) AS member_count,
+       SUM(CASE WHEN member_casual = 'casual' THEN 1 ELSE 0 END) AS casual_count
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY EXTRACT(HOUR FROM started_at)
+ORDER BY (member_count + casual_count) DESC
+
+--Starting location 
+SELECT start_station_name, member_casual,
+  AVG(start_lat) AS start_lat, AVG(start_lng) AS start_lng,
+  COUNT(ride_id) AS total_trips
+FROM ` Cyclistic.2022_trip_data`
+GROUP BY start_station_name, member_casual;
+
+--Avergae ride length on each day of the week for Members and Casual riders
+SELECT EXTRACT(DAYOFWEEK FROM started_at) AS day_of_week,
+       member_casual,
+       AVG(CASE WHEN member_casual = 'member' THEN EXTRACT(HOUR FROM ride_length_) * 3600 + EXTRACT(MINUTE FROM ride_length_) * 60 + EXTRACT(SECOND FROM ride_length_) END) AS avg_ride_length_members_seconds,
+       AVG(CASE WHEN member_casual = 'casual' THEN EXTRACT(HOUR FROM ride_length_) * 3600 + EXTRACT(MINUTE FROM ride_length_) * 60 + EXTRACT(SECOND FROM ride_length_) END) AS avg_ride_length_casual_seconds
+FROM  Cyclistic.2022_trip_data
+GROUP BY day_of_week, member_casual; 
