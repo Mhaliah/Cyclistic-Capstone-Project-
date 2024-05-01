@@ -1,0 +1,49 @@
+-----This is how i cleaned my data in order to move to the next step of analysis-----
+
+
+--combine the data
+CREATE TABLE `2022_trip_data` AS
+SELECT *
+FROM(
+  SELECT * FROM `an_to_aug_data`
+  UNION ALL
+  SELECT * FROM `sep_to_dec_data`
+)
+
+--Remove any blank values 
+DELETE FROM `2022_trip_data`
+WHERE
+start_station_name IS NULL
+AND 
+start_station_id IS NULL
+AND 
+end_station_id IS NULL
+AND 
+end_station_name IS NULL
+AND 
+end_lat IS NULL
+AND 
+end_lng IS NULL
+
+--Checking for duplicates
+SELECT DISTINCT ride_id
+FROM ` Cyclistic.2022_trip_data`
+
+-- Checking all ride id is 16 digits
+SELECT ride_id
+FROM ` Cyclistic.2022_trip_data` 
+WHERE LENGTH (ride_id) > 16
+
+-- Less than a minute 105842, remove from dataset
+DELETE FROM ` Cyclistic.2022_trip_data`
+WHERE (
+  EXTRACT(HOUR FROM (ended_at - started_at)) * 60 +
+  EXTRACT(MINUTE FROM (ended_at - started_at)) +
+  EXTRACT(SECOND FROM (ended_at - started_at)) / 60) <= 1; 
+
+--Longer than a day 157, remove from data set
+DELETE FROM ` Cyclistic.2022_trip_data`
+WHERE (
+  EXTRACT(HOUR FROM (ended_at - started_at)) * 60 +
+  EXTRACT(MINUTE FROM (ended_at - started_at)) +
+  EXTRACT(SECOND FROM (ended_at - started_at)) / 60) >= 1440; 
